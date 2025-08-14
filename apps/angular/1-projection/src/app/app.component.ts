@@ -6,7 +6,8 @@ import { TeacherCardComponent } from './component/teacher-card/teacher-card.comp
 @Component({
   selector: 'app-root',
   template: `
-    <div class="grid grid-cols-3 gap-3">
+    <div
+      class="mx-auto my-5 flex w-[1024px] justify-between rounded-md bg-gray-100 p-5">
       <app-teacher-card />
       <app-student-card />
       <app-city-card />
