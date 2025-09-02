@@ -5,7 +5,9 @@ import { RouterOutlet } from '@angular/router';
   imports: [RouterOutlet],
   selector: 'app-root',
   template: `
-    <router-outlet />
+    <div class="mx-auto my-5 w-[1024px] rounded-xl bg-gray-200 p-5">
+      <router-outlet />
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
