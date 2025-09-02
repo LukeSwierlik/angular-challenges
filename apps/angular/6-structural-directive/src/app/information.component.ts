@@ -11,7 +11,7 @@ import { UserStore } from './user.store';
 
       <!-- admin can see everything -->
       <div *appHasRoleIsAdmin="true">visible only for super admin</div>
-      <div *appHasRole="'MANAGER'; isAdmin: true">visible if manager</div>
+      <div *appHasRole="'MANAGER'">visible if manager</div>
       <div *appHasRole="['MANAGER', 'READER']">
         visible if manager and/or reader
       </div>
