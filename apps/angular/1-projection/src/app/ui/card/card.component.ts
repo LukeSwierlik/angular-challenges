@@ -1,6 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { CardType } from '../../model/card.model';
 import { ListItemComponent } from '../list-item/list-item.component';
 
 @Component({
@@ -32,15 +31,14 @@ import { ListItemComponent } from '../list-item/list-item.component';
 
     <ng-template
       #renderList
-      let-list="list"
-      let-nameProps="nameProps"
-      let-handleDeleteItem="handleDeleteItem">
-      @for (item of list; track item.id) {
+      let-cxtList="list"
+      let-cxtNameProps="nameProps"
+      let-cxtHandleDeleteItem="handleDeleteItem">
+      @for (item of cxtList; track item.id) {
         <app-list-item
-          [name]="item[nameProps]"
+          [name]="item[cxtNameProps]"
           [id]="item.id"
-          [type]="type()"
-          (delete)="handleDeleteItem($event)"></app-list-item>
+          (delete)="cxtHandleDeleteItem($event)"></app-list-item>
       }
     </ng-template>
   `,
@@ -48,14 +46,11 @@ import { ListItemComponent } from '../list-item/list-item.component';
 })
 export class CardComponent {
   readonly list = input<any[] | null>(null);
-  readonly type = input.required<CardType>();
   readonly nameProps = input.required<string>();
   readonly customClass = input('');
 
   readonly addNewItem = output<void>();
   readonly removeItem = output<number>();
-
-  CardType = CardType;
 
   onDelete = (id: number): void => {
     this.removeItem.emit(id);

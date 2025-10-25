@@ -4,7 +4,6 @@ import {
   input,
   output,
 } from '@angular/core';
-import { CardType } from '../../model/card.model';
 
 @Component({
   selector: 'app-list-item',
@@ -22,7 +21,6 @@ import { CardType } from '../../model/card.model';
 export class ListItemComponent {
   readonly id = input.required<number>();
   readonly name = input.required<string>();
-  readonly type = input.required<CardType>();
 
   readonly delete = output<number>();
 }

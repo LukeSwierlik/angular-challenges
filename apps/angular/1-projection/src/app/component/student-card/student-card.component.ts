@@ -10,7 +10,6 @@ import {
   randStudent,
 } from '../../data-access/fake-http.service';
 import { StudentStore } from '../../data-access/student.store';
-import { CardType } from '../../model/card.model';
 import { CardComponent } from '../../ui/card/card.component';
 
 @Component({
@@ -18,12 +17,11 @@ import { CardComponent } from '../../ui/card/card.component';
   template: `
     <app-card
       [list]="students()"
-      [type]="cardType"
       [nameProps]="'firstName'"
       (addNewItem)="addNewStudent()"
       (removeItem)="delete($event)"
       customClass="bg-light-green">
-      <h3>Students</h3>
+      <h3 class="font-semibold">Students</h3>
       <img ngSrc="assets/img/student.webp" width="200" height="200" />
     </app-card>
   `,
@@ -38,21 +36,20 @@ import { CardComponent } from '../../ui/card/card.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StudentCardComponent implements OnInit {
-  private http = inject(FakeHttpService);
-  private store = inject(StudentStore);
+  private readonly http = inject(FakeHttpService);
+  private readonly store = inject(StudentStore);
 
   students = this.store.students;
-  cardType = CardType.STUDENT;
 
   ngOnInit(): void {
     this.http.fetchStudents$.subscribe((s) => this.store.addAll(s));
   }
 
-  addNewStudent() {
+  addNewStudent(): void {
     this.store.addOne(randStudent());
   }
 
-  delete(id: number) {
+  delete(id: number): void {
     this.store.deleteOne(id);
   }
 }
