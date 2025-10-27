@@ -1,49 +1,67 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
-import { randText } from '@ngneat/falso';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Todo } from './services/todo.interface';
+import { TodolistService } from './services/todolist.service';
 
 @Component({
   imports: [],
   selector: 'app-root',
   template: `
-    @for (todo of todos; track todo.id) {
-      {{ todo.title }}
-      <button (click)="update(todo)">Update</button>
-    }
+    <div class="mx-auto my-0 flex w-[1024px] flex-col gap-4 bg-gray-100 p-4">
+      @for (todo of todos(); track todo.id) {
+        <div class="flex justify-between gap-4">
+          <p>{{ todo.title }}</p>
+
+          <div class="flex gap-2">
+            <button (click)="update(todo)" class="rounded bg-green-300 p-2">
+              Update
+            </button>
+
+            <button (click)="remove(todo.id)" class="rounded bg-red-300 p-2">
+              Remove
+            </button>
+          </div>
+        </div>
+      }
+    </div>
   `,
   styles: [],
 })
 export class AppComponent implements OnInit {
-  private http = inject(HttpClient);
+  private readonly todosService = inject(TodolistService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  todos!: any[];
+  todos = signal<Todo[]>([]);
 
   ngOnInit(): void {
-    this.http
-      .get<any[]>('https://jsonplaceholder.typicode.com/todos')
+    this.todosService
+      .getTodos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((todos) => {
-        this.todos = todos;
+        this.todos.set(todos);
       });
   }
 
-  update(todo: any) {
-    this.http
-      .put<any>(
-        `https://jsonplaceholder.typicode.com/todos/${todo.id}`,
-        JSON.stringify({
-          todo: todo.id,
-          title: randText(),
-          body: todo.body,
-          userId: todo.userId,
-        }),
-        {
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-        },
-      )
-      .subscribe((todoUpdated: any) => {
-        this.todos[todoUpdated.id - 1] = todoUpdated;
+  update(todo: Todo): void {
+    this.todosService
+      .updateItem(todo)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((updated: Todo) => {
+        this.todos.update((arr) =>
+          arr.map((item) => (item.id === updated.id ? updated : item)),
+        );
+      });
+  }
+
+  remove(id: number): void {
+    console.log(id);
+    this.todosService
+      .removeItem(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.todos.update((arr) => {
+          return arr.filter((item) => item.id !== id);
+        });
       });
   }
 }

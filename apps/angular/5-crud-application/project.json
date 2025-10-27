@@ -20,10 +20,7 @@
           "apps/angular/5-crud-application/src/favicon.ico",
           "apps/angular/5-crud-application/src/assets"
         ],
-        "styles": [
-          "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-          "apps/angular/5-crud-application/src/styles.scss"
-        ],
+        "styles": ["apps/angular/5-crud-application/src/styles.scss"],
         "scripts": [],
         "allowedCommonJsDependencies": ["seedrandom"]
       },
