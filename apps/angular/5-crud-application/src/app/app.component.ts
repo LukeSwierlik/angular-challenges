@@ -8,20 +8,24 @@ import { TodolistService } from './services/todolist.service';
   selector: 'app-root',
   template: `
     <div class="mx-auto my-0 flex w-[1024px] flex-col gap-4 bg-gray-100 p-4">
-      @for (todo of todos(); track todo.id) {
-        <div class="flex justify-between gap-4">
-          <p>{{ todo.title }}</p>
+      @if (!isLoading()) {
+        @for (todo of todos(); track todo.id) {
+          <div class="flex justify-between gap-4">
+            <p>{{ todo.title }}</p>
 
-          <div class="flex gap-2">
-            <button (click)="update(todo)" class="rounded bg-green-300 p-2">
-              Update
-            </button>
+            <div class="flex gap-2">
+              <button (click)="update(todo)" class="rounded bg-green-300 p-2">
+                Update
+              </button>
 
-            <button (click)="remove(todo.id)" class="rounded bg-red-300 p-2">
-              Remove
-            </button>
+              <button (click)="remove(todo.id)" class="rounded bg-red-300 p-2">
+                Remove
+              </button>
+            </div>
           </div>
-        </div>
+        }
+      } @else {
+        <div>Loading...</div>
       }
     </div>
   `,
@@ -32,13 +36,17 @@ export class AppComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   todos = signal<Todo[]>([]);
+  isLoading = signal<boolean>(true);
 
   ngOnInit(): void {
+    this.isLoading.set(true);
+
     this.todosService
       .getTodos()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((todos) => {
         this.todos.set(todos);
+        this.isLoading.set(false);
       });
   }
 
@@ -54,7 +62,6 @@ export class AppComponent implements OnInit {
   }
 
   remove(id: number): void {
-    console.log(id);
     this.todosService
       .removeItem(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
